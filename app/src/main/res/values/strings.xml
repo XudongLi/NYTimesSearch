@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">NYTArticleSearch</string>
+    <string name="SearchBottonText">Search</string>
+    <string name="SearchHint">Enter search query</string>
 </resources>

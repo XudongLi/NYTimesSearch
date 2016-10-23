@@ -7,8 +7,10 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".activities.SearchActivity">
+    tools:context="com.lixudong.android.nytarticlesearch.activities.ArticleActivity">
 
-    <include layout="@layout/content_search"/>
-
+    <WebView
+        android:id="@+id/wvArticle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></WebView>
 </RelativeLayout>
