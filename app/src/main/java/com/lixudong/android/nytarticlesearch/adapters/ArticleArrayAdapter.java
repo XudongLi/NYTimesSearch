@@ -1,4 +1,4 @@
-package com.lixudong.android.nytarticlesearch;
+package com.lixudong.android.nytarticlesearch.adapters;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lixudong.android.nytarticlesearch.R;
+import com.lixudong.android.nytarticlesearch.models.Article;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

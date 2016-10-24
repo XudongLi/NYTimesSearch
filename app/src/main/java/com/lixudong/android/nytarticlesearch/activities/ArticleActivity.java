@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.lixudong.android.nytarticlesearch.Article;
+import com.lixudong.android.nytarticlesearch.models.Article;
 import com.lixudong.android.nytarticlesearch.R;
 
 public class ArticleActivity extends AppCompatActivity {

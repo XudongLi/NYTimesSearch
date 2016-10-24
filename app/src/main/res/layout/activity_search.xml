@@ -7,8 +7,13 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:fitsSystemWindows="true"
     tools:context=".activities.SearchActivity">
 
-    <include layout="@layout/content_search"/>
+    <include layout="@layout/toolbar_main"/>
+    <include layout="@layout/content_search"
+        android:layout_below="@+id/toolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>

@@ -1,4 +1,4 @@
-package com.lixudong.android.nytarticlesearch;
+package com.lixudong.android.nytarticlesearch.models;
 
 import org.json.JSONArray;
 import org.json.JSONException;
