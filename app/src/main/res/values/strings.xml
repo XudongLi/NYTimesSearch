@@ -3,4 +3,12 @@
     <string name="SearchBottonText">Search</string>
     <string name="SearchHint">Enter search query</string>
     <string name="SearchPageTitle">News Article Search</string>
+    <string name="EditFilterTitle">Edit Filter</string>
+    <string name="edit_date">Begin Date</string>
+    <string name="sort_order">Sort Order</string>
+    <string name="news_desk">News Desk Values</string>
+    <string name="checkbox_arts">Arts</string>
+    <string name="checkbox_fashion">Fashion &amp; Style</string>
+    <string name="checkbox_sports">Sports</string>
+
 </resources>

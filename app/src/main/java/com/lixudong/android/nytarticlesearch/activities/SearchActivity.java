@@ -82,6 +82,16 @@ public class SearchActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.action_edit){
+            Intent i = new Intent(getApplicationContext(), EditFilterActivity.class);
+            startActivityForResult(i, 20);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void getArticles(String query) {
 
         AsyncHttpClient client = new AsyncHttpClient();
