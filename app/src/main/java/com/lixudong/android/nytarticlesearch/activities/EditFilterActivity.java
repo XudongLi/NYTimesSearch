@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.lixudong.android.nytarticlesearch.R;
+import com.lixudong.android.nytarticlesearch.models.Filter;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,9 +33,9 @@ public class EditFilterActivity extends AppCompatActivity implements DatePickerD
     Spinner spSortOrder;
     String sortOrderPicked;
     Map<String, Boolean> newsDeskPicked = new HashMap<String, Boolean>(){{
-        put("arts", false);
-        put("fashion", false);
-        put("sports", false);
+        put("Arts", false);
+        put("Fashion & Style", false);
+        put("Sports", false);
     }};
 
     @Override
@@ -51,8 +52,9 @@ public class EditFilterActivity extends AppCompatActivity implements DatePickerD
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_LONG).show();
+                Filter filter = new Filter(datePicked, sortOrderPicked, newsDeskPicked);
                 Intent result = new Intent();
+                result.putExtra("filter", filter);
                 setResult(RESULT_OK, result);
                 finish();
             }
@@ -65,7 +67,7 @@ public class EditFilterActivity extends AppCompatActivity implements DatePickerD
     }
 
     private void setupDatePickerDialog() {
-        dateFormatter = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
+        dateFormatter = new SimpleDateFormat("yyyyMMdd", Locale.US);
         final Calendar calendar = Calendar.getInstance();
         final DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(this,
                 calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), false);
@@ -107,23 +109,23 @@ public class EditFilterActivity extends AppCompatActivity implements DatePickerD
                 switch(view.getId()) {
                     case R.id.checkbox_arts:
                         if (checkBox.isChecked()) {
-                            newsDeskPicked.put("arts", true);
+                            newsDeskPicked.put("Arts", true);
                         } else {
-                            newsDeskPicked.put("arts", false);
+                            newsDeskPicked.put("Arts", false);
                         }
                         break;
                     case R.id.checkbox_fashion:
                         if (checkBox.isChecked()) {
-                            newsDeskPicked.put("fashion", true);
+                            newsDeskPicked.put("Fashion & Style", true);
                         } else {
-                            newsDeskPicked.put("fashion", false);
+                            newsDeskPicked.put("Fashion & Style", false);
                         }
                         break;
                     case R.id.checkbox_sports:
                         if (checkBox.isChecked()) {
-                            newsDeskPicked.put("sports", true);
+                            newsDeskPicked.put("Sports", true);
                         } else {
-                            newsDeskPicked.put("sports", false);
+                            newsDeskPicked.put("Sports", false);
                         }
                         break;
                 }
