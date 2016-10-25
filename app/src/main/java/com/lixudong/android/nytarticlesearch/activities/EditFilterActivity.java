@@ -11,11 +11,12 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.lixudong.android.nytarticlesearch.R;
 import com.lixudong.android.nytarticlesearch.models.Filter;
+
+import org.parceler.Parcels;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -54,7 +55,7 @@ public class EditFilterActivity extends AppCompatActivity implements DatePickerD
             public void onClick(View v) {
                 Filter filter = new Filter(datePicked, sortOrderPicked, newsDeskPicked);
                 Intent result = new Intent();
-                result.putExtra("filter", filter);
+                result.putExtra("filter", Parcels.wrap(filter));
                 setResult(RESULT_OK, result);
                 finish();
             }
@@ -92,7 +93,6 @@ public class EditFilterActivity extends AppCompatActivity implements DatePickerD
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 sortOrderPicked = parent.getItemAtPosition(position).toString();
-                Toast.makeText(getApplicationContext(), sortOrderPicked, Toast.LENGTH_LONG).show();
             }
 
             @Override

@@ -1,14 +1,18 @@
 package com.lixudong.android.nytarticlesearch.models;
 
-import java.io.Serializable;
+import org.parceler.Parcel;
+
 import java.util.Map;
 
-public class Filter implements Serializable {
+@Parcel
+public class Filter {
     String date;
     String sortOrder;
     boolean arts;
     boolean fashion;
     boolean sports;
+
+    public Filter() {}
 
     public Filter(String date, String sortOrder, Map<String, Boolean> newsDesk) {
         this.date = date;

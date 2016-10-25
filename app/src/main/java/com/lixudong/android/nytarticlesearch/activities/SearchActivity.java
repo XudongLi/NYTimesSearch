@@ -27,6 +27,7 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -61,7 +62,7 @@ public class SearchActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
                 Article article = articles.get(position);
-                i.putExtra("article", article);
+                i.putExtra("article", Parcels.wrap(article));
                 startActivity(i);
             }
         });
@@ -123,8 +124,7 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == 20) {
-            searchFilter = (Filter) data.getSerializableExtra("filter");
-            Toast.makeText(getApplicationContext(), searchFilter.toString(), Toast.LENGTH_LONG).show();
+            searchFilter = (Filter) Parcels.unwrap(data.getParcelableExtra("filter"));
         }
     }
 
