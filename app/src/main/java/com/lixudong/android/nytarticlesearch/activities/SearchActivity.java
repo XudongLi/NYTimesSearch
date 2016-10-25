@@ -4,22 +4,22 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import com.lixudong.android.nytarticlesearch.R;
-import com.lixudong.android.nytarticlesearch.adapters.ArticleArrayAdapter;
+import com.lixudong.android.nytarticlesearch.adapters.ArticlesAdapter;
 import com.lixudong.android.nytarticlesearch.models.Article;
 import com.lixudong.android.nytarticlesearch.models.Filter;
 import com.lixudong.android.nytarticlesearch.utils.ConnectionChecker;
-import com.lixudong.android.nytarticlesearch.utils.EndlessScrollListener;
+import com.lixudong.android.nytarticlesearch.utils.EndlessRecyclerViewScrollListener;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -30,17 +30,20 @@ import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
 public class SearchActivity extends AppCompatActivity {
 
-    GridView gvResults;
+    RecyclerView rvResults;
 
     ArrayList<Article> articles;
-    ArticleArrayAdapter articleArrayAdapter;
+    ArticlesAdapter articleArrayAdapter;
     Filter searchFilter;
     String queryRecord;
+
+    EndlessRecyclerViewScrollListener scrollListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,34 +55,35 @@ public class SearchActivity extends AppCompatActivity {
     public void setupViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        gvResults = (GridView) findViewById(R.id.gvResult);
+        rvResults = (RecyclerView) findViewById(R.id.rvResults);
         articles = new ArrayList<>();
-        articleArrayAdapter = new ArticleArrayAdapter(this, articles);
-        gvResults.setAdapter(articleArrayAdapter);
-
-        gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        articleArrayAdapter = new ArticlesAdapter(this, articles, new ArticlesAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
+            public void onItemClick(View view, int position) {
                 Article article = articles.get(position);
+                Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
                 i.putExtra("article", Parcels.wrap(article));
                 startActivity(i);
             }
         });
+        rvResults.setAdapter(articleArrayAdapter);
+        StaggeredGridLayoutManager gridLayoutManager =
+                new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
+        rvResults.setLayoutManager(gridLayoutManager);
 
-        gvResults.setOnScrollListener(new EndlessScrollListener() {
+        scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
             @Override
-            public boolean onLoadMore(int page, int totalItemsCount) {
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 ConnectionChecker connectionChecker = new ConnectionChecker();
                 if(connectionChecker.isOnline()) {
                     getArticles(queryRecord, page);
                 } else {
                     Toast.makeText(getApplicationContext(), "internet is not avialable", Toast.LENGTH_SHORT).show();
                 }
-
-                return true;
             }
-        });
+        };
+
+        rvResults.addOnScrollListener(scrollListener);
     }
 
     @Override
@@ -90,7 +94,11 @@ public class SearchActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                articleArrayAdapter.clear();
+                int curSize = articleArrayAdapter.getItemCount();
+                articles.clear();
+                //articleArrayAdapter.notifyItemRangeRemoved(0, curSize);
+                articleArrayAdapter.notifyDataSetChanged();
+                scrollListener.resetState();
                 // Persist the query for endless scrolling
                 queryRecord = query;
                 ConnectionChecker connectionChecker = new ConnectionChecker();
@@ -146,7 +154,10 @@ public class SearchActivity extends AppCompatActivity {
 
                 try {
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                    articleArrayAdapter.addAll(Article.fromJSONArray(articleJsonResults));
+                    int curSize = articleArrayAdapter.getItemCount();
+                    List<Article> newArticles = Article.fromJSONArray(articleJsonResults);
+                    articles.addAll(newArticles);
+                    articleArrayAdapter.notifyItemRangeInserted(curSize, newArticles.size());
                     Log.d("DEBUG", articleJsonResults.toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
