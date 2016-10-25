@@ -18,6 +18,7 @@ import com.lixudong.android.nytarticlesearch.R;
 import com.lixudong.android.nytarticlesearch.adapters.ArticleArrayAdapter;
 import com.lixudong.android.nytarticlesearch.models.Article;
 import com.lixudong.android.nytarticlesearch.models.Filter;
+import com.lixudong.android.nytarticlesearch.utils.EndlessScrollListener;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -37,6 +38,7 @@ public class SearchActivity extends AppCompatActivity {
     ArrayList<Article> articles;
     ArticleArrayAdapter articleArrayAdapter;
     Filter searchFilter;
+    String queryRecord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,14 @@ public class SearchActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        gvResults.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                getArticles(queryRecord, page);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -72,7 +82,10 @@ public class SearchActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                getArticles(query);
+                articleArrayAdapter.clear();
+                // Persist the query for endless scrolling
+                queryRecord = query;
+                getArticles(query, 0);
                 searchView.clearFocus();
                 return true;
             }
@@ -103,13 +116,13 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    public void getArticles(String query) {
+    public void getArticles(String query, int page) {
 
         AsyncHttpClient client = new AsyncHttpClient();
         String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
         RequestParams requestParams = new RequestParams();
         requestParams.put("api-key", "7494f6c4d819449789f4d52bc20cada9");
-        requestParams.put("page", 0);
+        requestParams.put("page", page);
         requestParams.put("q", query);
         applySearchFilter(requestParams);
         Log.d("DEBUG", requestParams.toString());
@@ -121,7 +134,6 @@ public class SearchActivity extends AppCompatActivity {
 
                 try {
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                    articleArrayAdapter.clear();
                     articleArrayAdapter.addAll(Article.fromJSONArray(articleJsonResults));
                     Log.d("DEBUG", articleJsonResults.toString());
                 } catch (JSONException e) {
