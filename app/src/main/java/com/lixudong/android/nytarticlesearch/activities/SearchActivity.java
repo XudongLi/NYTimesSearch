@@ -18,6 +18,7 @@ import com.lixudong.android.nytarticlesearch.R;
 import com.lixudong.android.nytarticlesearch.adapters.ArticleArrayAdapter;
 import com.lixudong.android.nytarticlesearch.models.Article;
 import com.lixudong.android.nytarticlesearch.models.Filter;
+import com.lixudong.android.nytarticlesearch.utils.ConnectionChecker;
 import com.lixudong.android.nytarticlesearch.utils.EndlessScrollListener;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -68,7 +69,13 @@ public class SearchActivity extends AppCompatActivity {
         gvResults.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public boolean onLoadMore(int page, int totalItemsCount) {
-                getArticles(queryRecord, page);
+                ConnectionChecker connectionChecker = new ConnectionChecker();
+                if(connectionChecker.isOnline()) {
+                    getArticles(queryRecord, page);
+                } else {
+                    Toast.makeText(getApplicationContext(), "internet is not avialable", Toast.LENGTH_SHORT).show();
+                }
+
                 return true;
             }
         });
@@ -85,7 +92,12 @@ public class SearchActivity extends AppCompatActivity {
                 articleArrayAdapter.clear();
                 // Persist the query for endless scrolling
                 queryRecord = query;
-                getArticles(query, 0);
+                ConnectionChecker connectionChecker = new ConnectionChecker();
+                if(connectionChecker.isOnline()) {
+                    getArticles(query, 0);
+                } else {
+                    Toast.makeText(getApplicationContext(), "internet is not avialable", Toast.LENGTH_SHORT).show();
+                }
                 searchView.clearFocus();
                 return true;
             }
